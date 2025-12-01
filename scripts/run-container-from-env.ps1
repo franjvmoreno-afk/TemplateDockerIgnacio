@@ -17,6 +17,7 @@ else {
 }
 
 # Configurar variables
+$servername = $envVars['SERVER_NAME'] ?? 'moodle.asir'
 $containerName = $envVars['CONTAINER_NAME'] ?? 'ApachePHPContainer'
 $portMapping = $envVars['PORT_MAPPING'] ?? '8081:80'
 $volumePath = $envVars['VOLUME_PATH'] ?? '.\src'
@@ -28,7 +29,7 @@ $dockerCmd = @(
     "docker run -d",
     "--name $containerName",
     "-p $portMapping",
-    "-v ${volumePath}:/var/www/moodle.asir",
+    "-v ${volumePath}:/var/www/${servername}",
     "--env-file $envFile",
     "--add-host=$hostEntry",
     "--hostname $containerName",
