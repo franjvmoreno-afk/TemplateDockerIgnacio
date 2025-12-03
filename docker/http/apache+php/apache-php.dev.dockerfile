@@ -7,6 +7,7 @@ ENV SERVER_NAME=${SERVER_NAME}
 ENV SERVER_PORT=${SERVER_PORT}
 
 EXPOSE ${SERVER_PORT}
+EXPOSE 9003
 
 RUN apk update && apk upgrade && \
     apk --no-cache add apache2 apache2-utils apache2-proxy php82 php82-apache2 \

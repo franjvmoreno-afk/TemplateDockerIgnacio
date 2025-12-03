@@ -15,14 +15,13 @@ else {
 }
 
 # Configurar variables
-$servername = $envVars['SERVER_NAME'] ?? 'moodle.asir'
-$containerName = $envVars['CONTAINER_NAME'] ?? 'ApachePHPContainer'
-$portMapping = $envVars['PORT_MAPPING'] ?? '8081:80'
-$volumePath = $envVars['VOLUME_PATH'] ?? '.\src'
-$imageName = $envVars['IMAGE_NAME'] ?? 'apachephp:dev'
-$hostEntry = $envVars['HOST_ENTRY'] ?? 'moodle.asir:127.0.0.1'
-
-# Construir y ejecutar comando docker
+$servername = $envVars['SERVER_NAME'] 
+$containerName = $envVars['CONTAINER_NAME'] 
+$portMapping = $envVars['PORT_MAPPING'] 
+$volumePath = $envVars['VOLUME_PATH']
+$imageName = $envVars['IMAGE_NAME']
+$hostEntry = $envVars['HOST_ENTRY'] 
+# Ejecutar el contenedor Docker
 $dockerCmd = @(
     "docker run -d",
     "--name $containerName",
