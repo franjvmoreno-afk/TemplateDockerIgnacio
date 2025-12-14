@@ -22,16 +22,27 @@ $containerName = $envVars['CONTAINER_NAME']
 $portMapping = $envVars['PORT_MAPPING'] 
 $volumePath = $envVars['VOLUME_PATH']
 $imageName = $envVars['IMAGE_NAME']
-$hostEntry = $envVars['HOST_ENTRY'] 
+$networkName = $envVars['NETWORK_NAME']
+$ip = $envVars['SERVER_IP']
+
+# Eliminar contenedor si existe
+if (docker ps -a --filter "name=^${containerName}$" --format "{{.Names}}" | Select-Object -First 1) {
+    Write-Host "Eliminando contenedor existente: $containerName"
+    docker stop $containerName 2>$null
+    docker rm $containerName 2>$null
+}
+
 # Ejecutar el contenedor Docker
 $dockerCmd = @(
     "docker run -d",
     "--name $containerName",
     "-p $portMapping",
     "-v ${volumePath}:/var/www/${servername}",
+    "-v .\logs\apachephp:/var/log/apache2",
     "--env-file $envFile",
-    "--add-host=$hostEntry",
     "--hostname $containerName",
+    "--network $networkName",
+    "--ip $ip"
     $imageName
 ) -join ' '
 

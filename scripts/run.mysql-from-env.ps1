@@ -26,7 +26,8 @@ $dbDataDir = $envVars['DB_DATADIR']
 $dbLogDir = $envVars['DB_LOG_DIR']
 $portMapping = $envVars['DB_PORT_MAPPING'] 
 $imageName = $envVars['DB_IMAGE_NAME']
-$hostEntry = $envVars['DB_HOST_ENTRY'] 
+$networkName = $envVars['DB_NETWORK_NAME']
+$ip = $envVars["DB_IP"]
 
 
 
@@ -43,10 +44,11 @@ $dockerCmd = @(
     "--name $containerName",
     "-p $portMapping",
     "-v .\mysql_data:$dbDataDir",
-    "-v .\mysql_logs:$dbLogDir",
+    "-v .\logs\mysql:$dbLogDir",
     "--env-file $envFile",
-    "--add-host=$hostEntry",
     "--hostname $containerName",
+    "--network $networkName",
+    "--ip $ip",
     $imageName
 ) -join ' '
 

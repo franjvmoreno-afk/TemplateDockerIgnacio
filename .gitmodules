@@ -1,3 +1,0 @@
-[submodule "moodle_src"]
-	path = moodle_src
-	url = https://github.com/moodle/moodle.git
