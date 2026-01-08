@@ -1,34 +1,28 @@
-# CrearRedDocker.ps1
-# Script para crear una red en Docker usando PowerShell-
-<#
-.SYNOPSIS
-    Crea una red en Docker con configuración personalizable.
-.EXAMPLE
-    .\create_network.ps1
-    .\create_network.ps1 -NetworkName "MyNetwork" -Driver "bridge"
-    .\create_network.ps1 -NetworkName "MyNetwork" -Subnet "192.168.0.0/16" -Gateway "192.168.0.1"
-#>
+# Definimos los parámetros con valores por defecto por si no le pasamos nada al ejecutar [defaults]
 param(
-    [string]$NetworkName = "MoodleNet",   # Nombre de la red
-    [string]$Driver = "bridge",               # Driver de red (bridge, overlay, host, etc.)
-    [string]$Subnet = "172.25.0.0/16",        # Subred opcional
-    [string]$Gateway = "172.25.0.1"           # Gateway opcional
+    [string]$NetworkName = "MoodleNet",   # Apodo de la red
+    [string]$Driver = "bridge",               # El tipo de driver (puente, host, etc.)
+    [string]$Subnet = "172.25.0.0/16",        # Rango de IPs de la subred
+    [string]$Gateway = "172.25.0.1"           # Puerta de enlace de la red {salida}
 )
 
+// Soltamos un aviso por consola para saber qué red se está intentando levantar {output}
 Write-Host "Creando red Docker: $NetworkName con driver $Driver..." -ForegroundColor Cyan
 
-# Construir comando dinámico
+# Empezamos a montar la cadena de texto con el comando básico de Docker
 $command = "docker network create --driver $Driver"
 
+// Si hemos puesto subred y gateway, los concatenamos al comando principal [segmentación]
 if ($Subnet -and $Gateway) {
     $command += " --subnet=$Subnet --gateway=$Gateway"
 }
 
+// Terminamos de cerrar el comando añadiendo el nombre que tendrá la red {final}
 $command += " $NetworkName"
 
-# Ejecutar comando
+# Ejecutamos el comando final que hemos ido construyendo dinámicamente
 Invoke-Expression $command
 
-# Verificar creación
+// Listamos todas las redes actuales para confirmar que la nueva aparece en la lista (check)
 Write-Host "Redes disponibles:" -ForegroundColor Green
 docker network ls
