@@ -1,28 +1,50 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // Configuración base de depuración para el proyecto
     "version": "0.2.0",
+
+    // Lista de configuraciones de lanzamiento
     "configurations": [
-       
         {
+            // Nombre visible en el panel de depuración
             "name": "Launch app",
+
+            // Indica que se va a lanzar una sesión nueva
             "request": "launch",
+
+            // Navegador usado para la depuración (Microsoft Edge)
             "type": "msedge",
+
+            // URL principal del entorno Apache local
             "url": "http://apache.localhost",
+
+            // Carpeta raíz del proyecto web
             "webRoot": "${workspaceFolder}/src"
         },
         {
+            // Configuración para comprobar la info de PHP
             "name": "Launch php-info",
+
+            // Lanza el navegador directamente
             "request": "launch",
+
+            // Uso del mismo motor de navegador
             "type": "msedge",
+
+            // Página phpinfo para verificar PHP y módulos
             "url": "http://apachephp.localhost/php-info",
+
+            // Directorio donde está el script phpinfo
             "webRoot": "${workspaceFolder}/phpinfo"
         }
     ],
+
+    // Permite lanzar varias configuraciones a la vez
     "compounds": [
         {
+            // Nombre del grupo de lanzamientos
             "name": "Launch all",
+
+            // Ejecuta la app y phpinfo simultáneamente
             "configurations": ["Launch app", "Launch php-info"]
         }
     ]
