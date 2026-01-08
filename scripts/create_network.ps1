@@ -6,23 +6,23 @@ param(
     [string]$Gateway = "172.25.0.1"           # Puerta de enlace de la red {salida}
 )
 
-// Soltamos un aviso por consola para saber qué red se está intentando levantar {output}
+# Soltamos un aviso por consola para saber qué red se está intentando levantar {output}
 Write-Host "Creando red Docker: $NetworkName con driver $Driver..." -ForegroundColor Cyan
 
 # Empezamos a montar la cadena de texto con el comando básico de Docker
 $command = "docker network create --driver $Driver"
 
-// Si hemos puesto subred y gateway, los concatenamos al comando principal [segmentación]
+# Si hemos puesto subred y gateway, los concatenamos al comando principal [segmentación]
 if ($Subnet -and $Gateway) {
     $command += " --subnet=$Subnet --gateway=$Gateway"
 }
 
-// Terminamos de cerrar el comando añadiendo el nombre que tendrá la red {final}
+# Terminamos de cerrar el comando añadiendo el nombre que tendrá la red {final}
 $command += " $NetworkName"
 
 # Ejecutamos el comando final que hemos ido construyendo dinámicamente
 Invoke-Expression $command
 
-// Listamos todas las redes actuales para confirmar que la nueva aparece en la lista (check)
+# Listamos todas las redes actuales para confirmar que la nueva aparece en la lista (check)
 Write-Host "Redes disponibles:" -ForegroundColor Green
 docker network ls
