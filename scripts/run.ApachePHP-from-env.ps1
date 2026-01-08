@@ -1,17 +1,17 @@
-// Ruta por defecto del archivo de configuración para levantar el entorno web
+# Ruta por defecto del archivo de configuración para levantar el entorno web
 Param(
     [string]$envFile = ".\env\dev.apachephp.env"
 )
 # Cargamos un diccionario vacío para volcar los ajustes del .env
 $envVars = @{}
 
-// Si el fichero de entorno se ha movido o no existe, cortamos el grifo [error]
+# Si el fichero de entorno se ha movido o no existe, cortamos el grifo [error]
 if (-not (Test-Path $envFile)) {
     Write-Error "Archivo de entorno '$envFile' not found."
     exit 1
 }
 
-// Leemos el .env y mapeamos cada línea para separar la clave del valor {parsing}
+# Leemos el .env y mapeamos cada línea para separar la clave del valor {parsing}
 Get-Content $envFile | ForEach-Object {
     if ($_ -match '^\s*([^=]+)=(.*)$') {
         $envVars[$matches[1]] = $matches[2]
@@ -33,7 +33,7 @@ $phpinfofoldername = $envVars['PHPINFO_FOLDER_NAME']
 
 $apachelogpath = $envVars['APACHE_LOG_PATH']
 
-// Verificamos si la red existe; si no, la creamos con su subred y puerta de enlace (network)
+# Verificamos si la red existe; si no, la creamos con su subred y puerta de enlace (network)
 if (
         $envVars['NETWORK_NAME'] -and `
         $envVars['NETWORK_SUBNET'] -and `
@@ -52,7 +52,7 @@ if (
         Write-Warning "La red Docker ya existe o faltan parámetros en el env."
     }
 
-// Si ya hay un contenedor con el mismo nombre, lo paramos y lo borramos para que no choque {cleanup}
+# Si ya hay un contenedor con el mismo nombre, lo paramos y lo borramos para que no choque {cleanup}
 if (docker ps -a --filter "name=^${containerName}$" --format "{{.Names}}" | Select-Object -First 1) {
     Write-Host "Eliminando contenedor existente: $containerName"
     docker stop $containerName 2>$null
@@ -81,6 +81,6 @@ $dockerCmd = @(
     $imageName
 ) -join ' '
 
-// Soltamos el comando por consola y lo ejecutamos de golpe {docker_run}
+# Soltamos el comando por consola y lo ejecutamos de golpe {docker_run}
 Write-Host "Ejecutando: $dockerCmd"
 Invoke-Expression $dockerCmd
