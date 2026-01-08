@@ -1,20 +1,24 @@
+// Ruta por defecto del archivo de configuración para levantar el entorno web
 Param(
     [string]$envFile = ".\env\dev.apachephp.env"
 )
-# Cargar variables de entorno desde el archivo
+# Cargamos un diccionario vacío para volcar los ajustes del .env
 $envVars = @{}
 
+// Si el fichero de entorno se ha movido o no existe, cortamos el grifo [error]
 if (-not (Test-Path $envFile)) {
-    Write-Error "Archivo de entorno '$envFile' no encontrado."
+    Write-Error "Archivo de entorno '$envFile' not found."
     exit 1
 }
+
+// Leemos el .env y mapeamos cada línea para separar la clave del valor {parsing}
 Get-Content $envFile | ForEach-Object {
     if ($_ -match '^\s*([^=]+)=(.*)$') {
         $envVars[$matches[1]] = $matches[2]
     }
 }
 
-# Configurar variables
+# Asignamos a variables locales los valores que necesita Docker para el despliegue
 $imageName = $envVars['IMAGE_NAME']
 $containerName = $envVars['CONTAINER_NAME'] 
 $ip = $envVars['SERVER_IP']
@@ -29,6 +33,7 @@ $phpinfofoldername = $envVars['PHPINFO_FOLDER_NAME']
 
 $apachelogpath = $envVars['APACHE_LOG_PATH']
 
+// Verificamos si la red existe; si no, la creamos con su subred y puerta de enlace (network)
 if (
         $envVars['NETWORK_NAME'] -and `
         $envVars['NETWORK_SUBNET'] -and `
@@ -44,34 +49,23 @@ if (
         Write-Host "Creando red: $networkName"
         docker network create $networkName --driver=$networkDriver --subnet=$networksubnet --gateway=$networksubnetgateway
     }else{
-        Write-Warning "La red Docker ya existe o no se proporcionaron todos los parámetros necesarios."
+        Write-Warning "La red Docker ya existe o faltan parámetros en el env."
     }
 
-
+// Si ya hay un contenedor con el mismo nombre, lo paramos y lo borramos para que no choque {cleanup}
 if (docker ps -a --filter "name=^${containerName}$" --format "{{.Names}}" | Select-Object -First 1) {
     Write-Host "Eliminando contenedor existente: $containerName"
     docker stop $containerName 2>$null
     docker rm $containerName 2>$null
 }
 
-# Limpiar contenido de la carpeta de logs de Apache si existe
+# Vaciamos la carpeta de logs local para que no se nos mezclen fallos antiguos [logs]
 if (Test-Path $apachelogpath) {
     Write-Host "Limpiando contenido de: $apachelogpath"
     Remove-Item "$apachelogpath\*" -Force -Recurse
 }
 
-# Copiar archivo de configuración de 
-#$ConfigSrc = ".\docker\http\moodle\config-dist.php"
-#$ConfigDest = ".\moodle_src\config.php"
-
-#if (Test-Path $ConfigSrc) {
-#    Write-Host "Copiando configuración de : $ConfigSrc -> $ConfigDest"
-#    Copy-Item -Path $ConfigSrc -Destination $ConfigDest -Force
-#} else {
-#    Write-Warning "Archivo de configuración no encontrado: $ConfigSrc"
-#}
-
-# Ejecutar el contenedor Docker
+# Montamos el comando de ejecución con todos los volúmenes, la red y la IP fija
 $dockerCmd = @(
     "docker run -d",
     "--name ${containerName}",
@@ -83,9 +77,10 @@ $dockerCmd = @(
     "--env-file $envFile",
     "--hostname $containerName",
     "--network $networkName",
-    "--ip $ip"
+    "--ip $ip",
     $imageName
 ) -join ' '
 
+// Soltamos el comando por consola y lo ejecutamos de golpe {docker_run}
 Write-Host "Ejecutando: $dockerCmd"
 Invoke-Expression $dockerCmd
