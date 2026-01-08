@@ -1,72 +1,72 @@
 [mysqld]
-# MySQL Server Configuration for Moodle
+# Configuración del servidor MySQL orientada a Moodle
 
-# Database Settings
-default-storage-engine=InnoDB
-character-set-server=utf8mb4
-collation-server=utf8mb4_unicode_ci
-skip-character-set-client-handshake
+# Ajustes de base de datos
+default-storage-engine=InnoDB          # Motor por defecto, más fiable para Moodle
+character-set-server=utf8mb4           # Soporte completo de caracteres (emojis incluidos)
+collation-server=utf8mb4_unicode_ci    # Comparación de texto compatible con UTF-8
+skip-character-set-client-handshake    # Fuerza el charset del servidor
 
-# Connection Settings
-max_connections=200
-max_allowed_packet=64M
-connect_timeout=10
-wait_timeout=28800
-max_connect_errors=100
+# Ajustes de conexión
+max_connections=200                    # Número máximo de conexiones simultáneas
+max_allowed_packet=64M                 # Tamaño máximo de paquetes enviados
+connect_timeout=10                     # Tiempo máximo para conectar
+wait_timeout=28800                     # Tiempo antes de cerrar conexiones inactivas
+max_connect_errors=100                 # Límite de errores antes de bloquear host
 
-# Table Cache
-table_open_cache=4000
-table_definition_cache=2000
+# Caché de tablas
+table_open_cache=4000                  # Tablas abiertas en caché
+table_definition_cache=2000            # Definiciones de tablas en memoria
 
-# Query Optimization
-query_cache_type=0
-query_cache_size=0
+# Optimización de consultas
+query_cache_type=0                     # Caché de consultas desactivada (obsoleta)
+query_cache_size=0                     # Evita uso de memoria innecesario
 
-# InnoDB Settings (recommended for Moodle)
-innodb_buffer_pool_size=1G
-innodb_log_file_size=256M
-innodb_file_per_table=1
-innodb_flush_log_at_trx_commit=2
-innodb_flush_method=O_DIRECT
-innodb_lock_wait_timeout=50
+# Ajustes InnoDB (recomendados para Moodle)
+innodb_buffer_pool_size=1G             # Memoria principal para datos e índices
+innodb_log_file_size=256M              # Tamaño de los logs de transacciones
+innodb_file_per_table=1                # Un archivo por tabla
+innodb_flush_log_at_trx_commit=2       # Mejor rendimiento con riesgo mínimo
+innodb_flush_method=O_DIRECT           # Evita doble caché con el sistema
+innodb_lock_wait_timeout=50            # Tiempo máximo de espera por bloqueos
 
-# Performance Schema
-performance_schema=ON
-performance_schema_max_table_instances=12500
+# Esquema de rendimiento
+performance_schema=ON                  # Activa métricas internas
+performance_schema_max_table_instances=12500  # Límite de tablas monitorizadas
 
-# Logging
-log_error=/var/log/mysql/error.log
-slow_query_log=1
-slow_query_log_file=/var/log/mysql/slow.log
-long_query_time=2
+# Logs
+log_error=/var/log/mysql/error.log      # Registro de errores del servidor
+slow_query_log=1                       # Activa log de consultas lentas
+slow_query_log_file=/var/log/mysql/slow.log  # Archivo de consultas lentas
+long_query_time=2                      # Umbral para considerar una consulta lenta
 
-# Binlog (for replication/backup)
-log_bin=/var/log/mysql/mysql-bin.log
-binlog_format=ROW
-server_id=1
-expire_logs_days=10
+# Binlog (replicación / copias)
+log_bin=/var/log/mysql/mysql-bin.log    # Log binario habilitado
+binlog_format=ROW                      # Formato más seguro para replicación
+server_id=1                            # Identificador único del servidor
+expire_logs_days=10                    # Limpieza automática de binlogs antiguos
 
-# Thread Settings
-thread_stack=192K
-thread_cache_size=16
+# Ajustes de hilos
+thread_stack=192K                      # Memoria por hilo
+thread_cache_size=16                   # Reutilización de hilos
 
-# Moodle Specific Optimizations
-tmp_table_size=32M
-max_heap_table_size=32M
-sort_buffer_size=2M
-read_buffer_size=2M
-read_rnd_buffer_size=8M
-join_buffer_size=2M
+# Optimizaciones específicas para Moodle
+tmp_table_size=32M                     # Tamaño de tablas temporales en memoria
+max_heap_table_size=32M                # Límite para tablas HEAP
+sort_buffer_size=2M                    # Buffer para ordenaciones
+read_buffer_size=2M                    # Buffer de lectura secuencial
+read_rnd_buffer_size=8M                # Buffer para lecturas aleatorias
+join_buffer_size=2M                    # Buffer para joins sin índice
 
 [mysqldump]
-quick
-quote-names
-max_allowed_packet=64M
-default-character-set=utf8mb4
+quick                                 # Volcado rápido de datos
+quote-names                           # Escapa nombres de tablas
+max_allowed_packet=64M                # Tamaño máximo de paquetes
+default-character-set=utf8mb4         # Charset por defecto en backups
 
 [mysql]
-default-character-set=utf8mb4
+default-character-set=utf8mb4         # Charset por defecto del cliente mysql
 
 [client]
-default-character-set=utf8mb4
-port=3306
+default-character-set=utf8mb4         # Charset por defecto para clientes
+port=3306                             # Puerto estándar de MySQL
