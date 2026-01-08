@@ -1,16 +1,16 @@
-// Parámetro inicial para cargar los ajustes específicos de MySQL
+# Parámetro inicial para cargar los ajustes específicos de MySQL
 param(
     [string]$envFile = ".\env\dev.mysql.env"
 )
 $envVars = @{}
 
-// Validamos que el archivo de configuración existe para no lanzar errores vacíos {check}
+# Validamos que el archivo de configuración existe para no lanzar errores vacíos {check}
 if (-not (Test-Path $envFile)) {
     Write-Error "Env file '$envFile' not found."
     exit 1
 } 
 
-// Extraemos las variables del archivo .env y las metemos en memoria para usarlas después
+# Extraemos las variables del archivo .env y las metemos en memoria para usarlas después
 Get-Content $envFile | ForEach-Object {
     if ($_ -match '^\s*([^=]+)=(.*)$') {
         $envVars[$matches[1]] = $matches[2]
@@ -47,6 +47,6 @@ $dockerCmd = @(
     $imageName
 ) -join ' '
 
-// Mostramos el comando final por pantalla y lo lanzamos [ejecución]
+# Mostramos el comando final por pantalla y lo lanzamos [ejecución]
 Write-Host "Ejecutando: $dockerCmd"
 Invoke-Expression $dockerCmd
